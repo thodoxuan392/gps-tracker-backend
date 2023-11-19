@@ -1,5 +1,10 @@
 export default () => ({
-  gspTrackerPort: process.env.GPS_TRACKER_PORT,
+  ygt92: {
+    port: Number(process.env.YGT92_PORT),
+  },
+  es353: {
+    port: Number(process.env.ES353_PORT),
+  },
   mongodb: {
     connectionString: process.env.MONGO_DB_CONNECTION_STRING,
     serverApi: {
