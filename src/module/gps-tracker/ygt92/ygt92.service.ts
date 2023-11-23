@@ -18,8 +18,8 @@ import {
 } from '../../repository/location/location-repository.interface';
 import {
   LOGIN_REPOSITORY,
-  LoginRepositoryPort,
-} from '../../repository/login/login-repository.interface';
+  DeviceStatusRepositoryPort,
+} from '../../repository/device-status/device-status-repository.interface';
 import { YGT92_SERVER_PORT, Ygt92Data, Ygt92ServerPort } from './adapter/ygt92-server/ygt92-server.interface';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class Ygt92Service {
     @Inject(HEARTBEAT_REPOSITORY)
     private _heartbeatRepo: HeartbeatRepositoryPort,
     @Inject(LOCATION_REPOSITORY) private _locationRepo: LocationRepositoryPort,
-    @Inject(LOGIN_REPOSITORY) private _loginRepo: LoginRepositoryPort,
+    @Inject(LOGIN_REPOSITORY) private _loginRepo: DeviceStatusRepositoryPort,
   ) {
     this._start();
   }

@@ -18,8 +18,8 @@ import {
 } from '../../repository/location/location-repository.interface';
 import {
   LOGIN_REPOSITORY,
-  LoginRepositoryPort,
-} from '../../repository/login/login-repository.interface';
+  DeviceStatusRepositoryPort,
+} from '../../repository/device-status/device-status-repository.interface';
 
 @Injectable()
 export class Es353Service {

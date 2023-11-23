@@ -1,56 +1,53 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import {
-  HeartbeatModel,
-  HeartbeatRepositoryPort,
-} from './heartbeat-repository.interface';
+import { DeviceStatusModel, DeviceStatusRepositoryPort } from './device-status-repository.interface';
 import {
   MONGO_DB_CLIENT,
   MongoDBClientPort,
 } from 'infra/mongodb-client/mongodb-client.interface';
 
 @Injectable()
-export class HeartbeatRepositoryService implements HeartbeatRepositoryPort {
-  private _logger = new Logger(HeartbeatRepositoryService.name);
-  private COLLECTION_NAME = 'heartbeat';
+export class DeviceStatusRepository implements DeviceStatusRepositoryPort {
+  private _logger = new Logger(DeviceStatusRepository.name);
+  private COLLECTION_NAME = 'device-status';
   constructor(
     @Inject(MONGO_DB_CLIENT) private _mongodbClient: MongoDBClientPort,
   ) {}
-  async create(model: HeartbeatModel): Promise<void> {
+  async create(model: DeviceStatusModel): Promise<void> {
     const collection = this._mongodbClient
       .getDB()
       .collection(this.COLLECTION_NAME);
     await collection.insertOne(model);
   }
-  async findByDeviceId(deviceId: string): Promise<HeartbeatModel[]> {
+  async findByDeviceId(deviceId: string): Promise<DeviceStatusModel[]> {
     const collection = this._mongodbClient
       .getDB()
-      .collection<HeartbeatModel>(this.COLLECTION_NAME);
-    const findResult = await collection.find<HeartbeatModel>({
+      .collection<DeviceStatusModel>(this.COLLECTION_NAME);
+    const findResult = await collection.find<DeviceStatusModel>({
       deviceId: deviceId,
     });
-    let result: HeartbeatModel[];
+    let result: DeviceStatusModel[];
     for await (const model of findResult) {
       result.push(model);
     }
     return result;
   }
 
-  async findAll(): Promise<HeartbeatModel[]> {
+  async findAll(): Promise<DeviceStatusModel[]> {
     const collection = this._mongodbClient
       .getDB()
-      .collection<HeartbeatModel>(this.COLLECTION_NAME);
-    const findResult = await collection.find<HeartbeatModel>({});
-    const result: HeartbeatModel[] = [];
+      .collection<DeviceStatusModel>(this.COLLECTION_NAME);
+    const findResult = await collection.find<DeviceStatusModel>({});
+    const result: DeviceStatusModel[] = [];
     for await (const model of findResult) {
       result.push(model);
     }
     return result;
   }
-  async update(model: HeartbeatModel): Promise<void> {
+  async update(model: DeviceStatusModel): Promise<void> {
     const { deviceId } = model;
     const collection = this._mongodbClient
       .getDB()
-      .collection<HeartbeatModel>(this.COLLECTION_NAME);
+      .collection<DeviceStatusModel>(this.COLLECTION_NAME);
     await collection.updateOne(
       {
         deviceId: deviceId,
@@ -64,7 +61,7 @@ export class HeartbeatRepositoryService implements HeartbeatRepositoryPort {
   async deleteByDeviceId(deviceId: string): Promise<void> {
     const collection = this._mongodbClient
       .getDB()
-      .collection<HeartbeatModel>(this.COLLECTION_NAME);
+      .collection<DeviceStatusModel>(this.COLLECTION_NAME);
     await collection.deleteMany({
       deviceId: deviceId,
     });
@@ -72,7 +69,7 @@ export class HeartbeatRepositoryService implements HeartbeatRepositoryPort {
   async deleteAll(): Promise<void> {
     const collection = this._mongodbClient
       .getDB()
-      .collection<HeartbeatModel>(this.COLLECTION_NAME);
+      .collection<DeviceStatusModel>(this.COLLECTION_NAME);
     await collection.deleteMany();
   }
 }

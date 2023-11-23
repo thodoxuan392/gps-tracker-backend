@@ -1,2 +1,3 @@
 export const START_BYTE = '*';
-export const STOP_BIT = '#';
+export const STOP_BYTE = '#';
+export const DELIMITER = ',';
