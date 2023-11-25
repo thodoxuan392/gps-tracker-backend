@@ -22,9 +22,15 @@ export class Es353Server implements Es353ServerPort {
           connection.address(),
         )}  established successfully`,
       );
-      connection.on('data', this._handleConnectionData.bind(this, 1));
-      connection.on('error', this._handleConnectionError.bind(this, 1));
-      connection.on('close', this._handleConnectionClose.bind(this, 1));
+      connection.on('data', (data) => {
+        this._handleConnectionData(connection, data);
+      });
+      connection.on('error', (error) => {
+        this._handleConnectionError(connection, error);
+      });
+      connection.on('close', (hadError) => {
+        this._handleConnectionClose(connection, hadError);
+      });
       connection.on('timeout', () => {
         this._logger.error('Connection timed out');
       });

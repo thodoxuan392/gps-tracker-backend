@@ -11,21 +11,11 @@ export interface LocationRepositoryPort {
 
 export type LocationModel = {
   deviceId: string;
-  dataTime: string;
-  gpsInformation: {
-    latitude: Latitude;
-    longitude: Longitude;
-    speed: number;
-    longitudeDirection: LongitudeDirection;
-    latitudeDirection: LatitudeDirection;
-    angle: number;
-  };
-  lbsInformation: {
-    mobileCountry: string;
-    mobileNetwork: string;
-    locationArea: string;
-    cellId: string;
-  };
+  latitude: Latitude;
+  latitudeDirection: LatitudeDirection;
+  longitude: Longitude;
+  longitudeDirection: LongitudeDirection;
+  speed: number;
   updatedAt: string;
   createdAt: string;
 };

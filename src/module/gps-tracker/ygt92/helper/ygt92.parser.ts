@@ -1,22 +1,20 @@
-import {
-  HeartBeatContent,
-  LocationContent,
-  LoginContent,
-  PacketBase,
-} from '../shared/types';
-import { Constant, Utils } from '../shared';
+import { YGT92 } from 'src/module/shared';
 
 export class Ygt92Parser {
-  static parseTcpData<T>(data: Buffer): PacketBase<T> {
+  static parseTcpData<T>(data: Buffer): YGT92.Types.PacketBase<T> {
     // Check start byte
     const startBit = [data[0], data[1]];
-    if (!Utils.compareArray(startBit, Constant.DataPacket.START_BIT)) {
+    if (
+      !YGT92.Utils.compareArray(startBit, YGT92.Constant.DataPacket.START_BIT)
+    ) {
       console.error(`Invalid start bit [${startBit}]`);
       return;
     }
     // Check stop bit
     const stopBit = [data[data.length - 2], data[data.length - 1]];
-    if (!Utils.compareArray(stopBit, Constant.DataPacket.STOP_BIT)) {
+    if (
+      !YGT92.Utils.compareArray(stopBit, YGT92.Constant.DataPacket.STOP_BIT)
+    ) {
       console.error(`Invalid stop bit [${stopBit}]`);
       return;
     }
@@ -31,7 +29,9 @@ export class Ygt92Parser {
     }
     // Protocol check
     const protocolNumber = data[3];
-    const protocolList = Object.values(Constant.DataPacket.ProtocolNumber);
+    const protocolList = Object.values(
+      YGT92.Constant.DataPacket.ProtocolNumber,
+    );
     if (!protocolList.includes(protocolNumber)) {
       console.error(`Protocol number ${protocolNumber} is not valid`);
       return;
@@ -42,7 +42,7 @@ export class Ygt92Parser {
     const errorCheck = [data[data.length - 4], data[data.length - 3]];
     const dataToCheck = data.subarray(2, data.length - 5);
     const crc = (data[data.length - 4] << 8) | data[data.length - 3];
-    const crcCalculated = Utils.crcCalculate(dataToCheck);
+    const crcCalculated = YGT92.Utils.crcCalculate(dataToCheck);
     if (crcCalculated !== crc) {
       console.error(
         `Data array ${dataToCheck} have crc ${crcCalculated}, expect ${crc}`,
@@ -52,13 +52,13 @@ export class Ygt92Parser {
     const informationContent = data.subarray(4, data.length - 7);
     let content;
     switch (protocolNumber) {
-      case Constant.DataPacket.ProtocolNumber.LOGIN_MESSAGE:
+      case YGT92.Constant.DataPacket.ProtocolNumber.LOGIN_MESSAGE:
         content = this.parseLoginMessage(informationContent);
         break;
-      case Constant.DataPacket.ProtocolNumber.LOCATION_DATA:
+      case YGT92.Constant.DataPacket.ProtocolNumber.LOCATION_DATA:
         content = this.parseLocationData(informationContent);
         break;
-      case Constant.DataPacket.ProtocolNumber.STATUS_INFORMATION:
+      case YGT92.Constant.DataPacket.ProtocolNumber.STATUS_INFORMATION:
         content = this.parseHeartBeat(informationContent);
         break;
       default:
@@ -74,12 +74,16 @@ export class Ygt92Parser {
       stopBit,
     };
   }
-  static parseLoginMessage(informationContent: Buffer): LoginContent {
+  static parseLoginMessage(
+    informationContent: Buffer,
+  ): YGT92.Types.LoginContent {
     return {
       terminalId: Array.from(informationContent, (byte: number) => byte),
     };
   }
-  static parseLocationData(informationContent: Buffer): LocationContent {
+  static parseLocationData(
+    informationContent: Buffer,
+  ): YGT92.Types.LocationContent {
     return {
       gpsInformation: {
         dataTime: Array.from(
@@ -118,7 +122,9 @@ export class Ygt92Parser {
       },
     };
   }
-  static parseHeartBeat(informationContent: Buffer): HeartBeatContent {
+  static parseHeartBeat(
+    informationContent: Buffer,
+  ): YGT92.Types.HeartBeatContent {
     return {
       statusInformation: {
         terminalInformation: informationContent[0],

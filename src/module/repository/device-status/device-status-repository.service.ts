@@ -1,5 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { DeviceStatusModel, DeviceStatusRepositoryPort } from './device-status-repository.interface';
+import {
+  DeviceStatusModel,
+  DeviceStatusRepositoryPort,
+} from './device-status-repository.interface';
 import {
   MONGO_DB_CLIENT,
   MongoDBClientPort,
@@ -18,17 +21,13 @@ export class DeviceStatusRepository implements DeviceStatusRepositoryPort {
       .collection(this.COLLECTION_NAME);
     await collection.insertOne(model);
   }
-  async findByDeviceId(deviceId: string): Promise<DeviceStatusModel[]> {
+  async findByDeviceId(deviceId: string): Promise<DeviceStatusModel> {
     const collection = this._mongodbClient
       .getDB()
       .collection<DeviceStatusModel>(this.COLLECTION_NAME);
-    const findResult = await collection.find<DeviceStatusModel>({
+    const result = await collection.findOne<DeviceStatusModel>({
       deviceId: deviceId,
     });
-    let result: DeviceStatusModel[];
-    for await (const model of findResult) {
-      result.push(model);
-    }
     return result;
   }
 

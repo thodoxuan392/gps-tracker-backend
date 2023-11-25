@@ -13,4 +13,4 @@ import { DeviceStatusRepository } from './device-status-repository.service';
   ],
   exports: [DEVICE_STATUS_REPOSITORY],
 })
-export class LoginRepositoryModule {}
+export class DeviceStatusRepositoryModule {}
