@@ -6,6 +6,7 @@ import { Es353Server } from './adapter/es353-server/es353-server.service';
 import { Module } from '@nestjs/common';
 import { DeviceStatusRepositoryModule } from 'src/module/repository/device-status/device-status-repository.module';
 import { LocationRepositoryModule } from 'src/module/repository/location/location-repository.module';
+import { LocationBroadcasterModule } from 'infra/location-broadcaster/location-broadcaster.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { LocationRepositoryModule } from 'src/module/repository/location/locatio
     DeviceRepositoryModule,
     DeviceStatusRepositoryModule,
     LocationRepositoryModule,
+    LocationBroadcasterModule,
   ],
   providers: [
     Es353Service,

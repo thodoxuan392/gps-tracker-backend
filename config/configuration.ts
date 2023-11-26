@@ -16,4 +16,11 @@ export default () => ({
     },
     name: process.env.MONGO_DB_DB_NAME,
   },
+  broadcaster: {
+    host: process.env.BROADCASTER_SERVER_HOST,
+    port: Number(process.env.BROADCASTER_SERVER_PORT),
+    clientId: process.env.BROADCASTER_SERVER_CLIENT_ID,
+    username: process.env.BROADCASTER_SERVER_USERNAME,
+    password: process.env.BROADCASTER_SERVER_PASSWORD,
+  },
 });

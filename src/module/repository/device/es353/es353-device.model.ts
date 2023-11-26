@@ -1,6 +1,10 @@
-import { DeviceBaseModel } from '../device-repository.interface';
+import {
+  DeviceBaseModel,
+  DeviceModelName,
+} from '../device-repository.interface';
 
 export type Es353DeviceModel = DeviceBaseModel & {
+  deviceModel: DeviceModelName.ES353;
   metaData: Es353DeviceMetaData;
 };
 

@@ -8,6 +8,7 @@ import {
 } from './adapter/es353-server/es353-server.interface';
 import {
   DEVICE_REPOSITORY,
+  DeviceModelName,
   DeviceRepositoryPort,
 } from 'src/module/repository/device/device-repository.interface';
 import { Es353Parser } from './helper/es353.parser';
@@ -16,7 +17,7 @@ import {
   DEVICE_STATUS_REPOSITORY,
   DeviceStatusRepositoryPort,
 } from 'src/module/repository/device-status/device-status-repository.interface';
-import { Es353DeviceModel } from 'src/module/repository/device/es353/es353-device.interface';
+import { Es353DeviceModel } from 'src/module/repository/device/es353/es353-device.model';
 import { Es353DeviceStatusModel } from 'src/module/repository/device-status/es353/es353-device-status.interface';
 import { ES353 } from 'src/module/shared';
 import {
@@ -25,6 +26,10 @@ import {
   LocationRepositoryPort,
 } from 'src/module/repository/location/location-repository.interface';
 import { Es353Builder } from './helper/es353.builder';
+import {
+  LOCATION_BROADCASTER,
+  LocationBroadcasterPort,
+} from '../../../../infra/location-broadcaster/location-broadcaster.interface';
 
 @Injectable()
 export class Es353Service {
@@ -43,13 +48,12 @@ export class Es353Service {
     @Inject(DEVICE_STATUS_REPOSITORY)
     private _deviceStatusRepo: DeviceStatusRepositoryPort,
     @Inject(LOCATION_REPOSITORY) private _locationRepo: LocationRepositoryPort,
+    @Inject(LOCATION_BROADCASTER)
+    private _locationBroadcaster: LocationBroadcasterPort,
   ) {
     this._start();
   }
   public handleCommand(command: ES353.Types.Command) {
-    Object.keys(this._connection).forEach((key) => {
-      this._connection[key].write(Es353Builder.buildCommand(command));
-    });
     const { vehicleId: deviceId } = command;
     const connection = this._getConnectionByDeviceId(deviceId);
     if (!connection) {
@@ -94,7 +98,7 @@ export class Es353Service {
 
     // Create new location
     const { latitude, latitudeSign, longitude, longitudeSign, speed } = message;
-    await this._createNewLocation({
+    const location = await this._createNewLocation({
       deviceId,
       latitude: ES353.Utils.cvtLatLongToStd(latitude),
       latitudeDirection: ES353.Utils.cvtLatSignToDirection(latitudeSign),
@@ -102,6 +106,8 @@ export class Es353Service {
       longitudeDirection: ES353.Utils.cvtLongSignToDirection(longitudeSign),
       speed,
     });
+
+    this._locationBroadcaster.publish(device, location);
   }
 
   public async handleFeedbackConfirm(message: ES353.Types.FeedbackConfirm) {
@@ -150,6 +156,7 @@ export class Es353Service {
     const { deviceId, name, serialNumber, metaData } = params;
     const model: Es353DeviceModel = {
       deviceId,
+      deviceModel: DeviceModelName.ES353,
       name: name || deviceId,
       serialNumber: serialNumber || deviceId,
       metaData: metaData,
